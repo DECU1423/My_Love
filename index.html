@@ -3,92 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nuestra Historia - Animación Interactiva</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
+    <title>Paratimamacita_Teamooooo</title>
     <style>
         body {
             margin: 0;
             overflow: hidden;
-            background-color: #050508; /* Fondo noche profunda */
-            font-family: 'Montserrat', sans-serif;
-            color: #ffffff;
+            background-color: #000000;
+        }
+        svg {
+            display: none;
         }
         #canvas-container {
-            position: absolute;
-            top: 0;
-            left: 0;
             width: 100vw;
             height: 100vh;
-            z-index: 1;
-        }
-
-        /* Estilos de las capas de texto interactivas */
-        .overlay-text {
-            position: absolute;
-            z-index: 10;
-            pointer-events: none; /* Permite interactuar con el 3D por detrás */
-            opacity: 0;
-            transition: all 1s ease;
-        }
-
-        /* Etapa 3: Palabras al lado del árbol */
-        #etapa3-texto {
-            top: 40%;
-            left: 60%;
-            transform: translateY(-50%);
-            max-width: 350px;
-        }
-        #etapa3-texto h2 {
-            font-family: 'Dancing Script', cursive;
-            font-size: 2.8rem;
-            color: #ff75a0;
-            margin: 0 0 10px 0;
-            text-shadow: 0 0 15px rgba(255, 117, 160, 0.6);
-        }
-        #etapa3-texto p {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            color: #e0e0e6;
-        }
-
-        /* Etapa 5: Carta final interactiva */
-        #carta-contenedor {
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.9);
-            width: 90%;
-            max-width: 500px;
-            padding: 40px;
-            box-sizing: border-box;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 117, 160, 0.2);
-            border-radius: 20px;
-            backdrop-filter: blur(15px); /* Efecto vidrio esmerilado */
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255, 117, 160, 0.1);
-            text-align: center;
-            pointer-events: auto; /* Permite hacer scroll o click en la carta */
-        }
-        #carta-contenedor h1 {
-            font-family: 'Dancing Script', cursive;
-            font-size: 3rem;
-            color: #ff4d80;
-            margin-top: 0;
-            text-shadow: 0 0 20px rgba(255, 77, 128, 0.4);
-        }
-        #carta-contenedor p {
-            font-size: 1rem;
-            line-height: 1.8;
-            color: #f0f0f5;
-            text-align: justify;
-        }
-        .firma {
-            margin-top: 30px;
-            font-family: 'Dancing Script', cursive;
-            font-size: 2.2rem;
-            color: #ff75a0;
-            text-align: right !important;
         }
     </style>
+    <!-- Librerías necesarias -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 </head>
@@ -96,239 +26,121 @@
 
     <div id="canvas-container"></div>
 
-    <div id="etapa3-texto" class="overlay-text">
-        <h2>Nuestras raíces...</h2>
-        <p>Al igual que este árbol, nuestro amor comenzó con una semilla silenciosa y creció fuerte, extendiendo sus ramas hacia el cielo, alimentándose de cada momento compartido.</p>
-    </div>
-
-    <div id="carta-contenedor" class="overlay-text">
-        <h1>Para Ti, Mi Amor</h1>
-        <p>
-            Aquí es donde puedes colocar esa carta tan especial que me vas a pasar. Cada palabra flotará rodeada de una lluvia mágica de corazones latiendo en el fondo. He diseñado este espacio para que se sienta íntimo, cálido y absolutamente inolvidable. El amor no se trata solo de florecer, sino de saber qué hojas dejar ir para que nazcan historias aún más hermosas.
-        </p>
-        <p class="firma">Con todo mi amor...</p>
-    </div>
+    <!-- Trazado SVG del corazón -->
+    <svg width="600" height="552" viewBox="0 0 600 552">
+        <path id="corazon" d="M 300, 140 
+             C 300, 140 240, 40 140, 40 
+             C 40, 40 40, 160 40, 160 
+             C 40, 260 180, 380 300, 480 
+             C 420, 380 560, 260 560, 160 
+             C 560, 160 560, 40 460, 40 
+             C 360, 40 300, 140 300, 140 Z" />
+    </svg>
 
     <script>
-        // 1. CONFIGURACIÓN DEL ESCENARIO 3D
+        // 1. Configuración de la Escena 3D
+        const container = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
+        
         const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
-        camera.position.set(0, 0, 300); // Centramos la cámara perfectamente
+        
+        // Función para calcular la distancia ideal de la cámara según el ancho de la pantalla
+        function obtenerDistanciaCamara() {
+            const ancho = window.innerWidth;
+            if (ancho < 500) {
+                return 750; // Pantallas de celular (muy lejos para que quepa verticalmente)
+            } else if (ancho < 900) {
+                return 600; // Tablets o pantallas medianas
+            } else {
+                return 480; // Computadoras de escritorio (distancia estándar)
+            }
+        }
+
+        // Posicionamos la cámara usando la distancia responsiva calculada
+        camera.position.set(300, -260, obtenerDistanciaCamara()); 
+        camera.lookAt(300, -260, 0);
 
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(window.devicePixelRatio);
-        document.getElementById('canvas-container').appendChild(renderer.domElement);
+        container.appendChild(renderer.domElement);
 
-        // Generador de texturas suaves para partículas (brillo difuminado)
-        function crearTexturaParticula(r, g, b) {
+        // Generador de textura suave para las partículas
+        function crearTexturaParticula() {
             const canvas = document.createElement('canvas');
             canvas.width = 16;
             canvas.height = 16;
             const ctx = canvas.getContext('2d');
             const gradient = ctx.createRadialGradient(8, 8, 0, 8, 8, 8);
             gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');      
-            gradient.addColorStop(0.3, `rgba(${r}, ${g}, ${b}, 0.8)`);    
-            gradient.addColorStop(0.6, `rgba(${r}, ${g}, ${b}, 0.2)`);    
+            gradient.addColorStop(0.2, 'rgba(255, 80, 160, 0.9)');    
+            gradient.addColorStop(0.5, 'rgba(255, 30, 120, 0.3)');    
             gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');              
             ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, 16, 16);
             return new THREE.CanvasTexture(canvas);
         }
 
-        // 2. CREACIÓN PROCEDIMENTAL DEL ÁRBOL
-        const trunkVertices = []; // Partículas de madera
-        const leafVertices = [];  // Partículas de corazones fijos
-        const fallingVertices = []; // Partículas de corazones que caerán
+        // Timeline de GSAP
+        const tl = gsap.timeline({ repeat: -1, yoyo: true, repeatDelay: 1.5 });
 
-        // Generación matemática de un corazón 3D
-        function generarCorazon(puntosArray, cx, cy, cz, escala) {
-            const numPuntos = 15;
-            for (let i = 0; i < numPuntos; i++) {
-                const t = (i / numPuntos) * Math.PI * 2;
-                // Ecuación paramétrica de corazón
-                const x = 16 * Math.pow(Math.sin(t), 3);
-                const y = 13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t);
-                
-                const vector = new THREE.Vector3(
-                    cx + x * escala + (Math.random() - 0.5) * 2,
-                    cy + y * escala + (Math.random() - 0.5) * 2,
-                    cz + (Math.random() - 0.5) * 5
-                );
-                puntosArray.push(vector);
-            }
-        }
+        // 2. Procesamiento del SVG (Código original de la imagen)
+        const path = document.querySelector("#corazon");
+        const length = path.getTotalLength();
+        const vertices = [];
 
-        // Generación de ramas recursivas para el árbol
-        function crearRama(x1, y1, z1, angulo, longitud, grosor, profundidad) {
-            if (profundidad === 0) {
-                // Al final de las ramas, florecen los corazones (hojas)
-                // Decidimos al azar si la hoja se queda fija o se caerá en la etapa 4
-                if (Math.random() > 0.4) {
-                    generarCorazon(leafVertices, x1, y1, z1, 1.2);
-                } else {
-                    generarCorazon(fallingVertices, x1, y1, z1, 1.2);
-                }
-                return;
-            }
-
-            // Calculamos el final de la rama actual
-            const x2 = x1 + Math.sin(angulo) * longitud;
-            const y2 = y1 + Math.cos(angulo) * longitud;
-            const z2 = z1 + (Math.random() - 0.5) * (longitud * 0.5);
-
-            // Rellenamos el tramo con partículas de madera
-            const pasos = longitud * 0.8;
-            for (let i = 0; i < pasos; i++) {
-                const t = i / pasos;
-                trunkVertices.push(new THREE.Vector3(
-                    THREE.MathUtils.lerp(x1, x2, t) + (Math.random() - 0.5) * grosor,
-                    THREE.MathUtils.lerp(y1, y2, t) + (Math.random() - 0.5) * grosor,
-                    THREE.MathUtils.lerp(z1, z2, t) + (Math.random() - 0.5) * grosor
-                ));
-            }
-
-            // Ramificamos en dos direcciones
-            const nRamas = 2;
-            for (let r = 0; r < nRamas; r++) {
-                const nuevoAngulo = angulo + (Math.random() - 0.5) * 0.6;
-                crearRama(x2, y2, z2, nuevoAngulo, longitud * 0.75, grosor * 0.65, profundidad - 1);
-            }
-        }
-
-        // Ejecutamos la generación (Tronco inicia en (0, -130, 0) apuntando hacia arriba)
-        crearRama(0, -130, 0, 0, 75, 8, 6);
-
-        // 3. ENTORNO DE CORAZONES FLOTANTES DE FONDO (Para la etapa final)
-        const bgVertices = [];
-        for (let i = 0; i < 60; i++) {
-            generarCorazon(
-                bgVertices, 
-                (Math.random() - 0.5) * 600, 
-                (Math.random() - 0.5) * 400, 
-                -150 + (Math.random() - 0.5) * 100, // En el fondo
-                0.8
+        for (let i = 0; i < length; i += 0.1) {
+            const point = path.getPointAtLength(i);
+            const vector = new THREE.Vector3(point.x, -point.y, 0);
+            
+            vector.x += (Math.random() - 0.5) * 30;
+            vector.y += (Math.random() - 0.5) * 30;
+            vector.z += (Math.random() - 0.5) * 70;
+            
+            vertices.push(vector);
+            
+            tl.from(vector, {
+                x: 600 / 2,
+                y: -552 / 2,
+                z: 0,
+                ease: "power2.inOut",
+                duration: "random(2, 5)"
+            },
+            i * 0.002
             );
         }
 
-        // 4. CREACIÓN DE GEOMETRÍAS Y MATERIALES EN THREE.JS
-        // A. Tronco (Marrón/Dorado suave)
-        const trunkGeo = new THREE.BufferGeometry().setFromPoints(trunkVertices);
-        const trunkMat = new THREE.PointsMaterial({ size: 1.8, map: crearTexturaParticula(218, 165, 32), transparent: true, blending: THREE.AdditiveBlending });
-        const trunkPointsObj = new THREE.Points(trunkGeo, trunkMat);
-
-        // B. Hojas Fijas (Rosa Brillante)
-        const leafGeo = new THREE.BufferGeometry().setFromPoints(leafVertices);
-        const leafMat = new THREE.PointsMaterial({ size: 2.2, map: crearTexturaParticula(255, 117, 160), transparent: true, blending: THREE.AdditiveBlending });
-        const leafPointsObj = new THREE.Points(leafGeo, leafMat);
-
-        // C. Hojas que se Caerán (Rojo Pasión)
-        const fallingGeo = new THREE.BufferGeometry().setFromPoints(fallingVertices);
-        const fallingMat = new THREE.PointsMaterial({ size: 2.2, map: crearTexturaParticula(255, 40, 100), transparent: true, blending: THREE.AdditiveBlending });
-        const fallingPointsObj = new THREE.Points(fallingGeo, fallingMat);
-
-        // D. Corazones de Fondo
-        const bgGeo = new THREE.BufferGeometry().setFromPoints(bgVertices);
-        const bgMat = new THREE.PointsMaterial({ size: 1.5, map: crearTexturaParticula(255, 80, 140), transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false });
-        const bgPointsObj = new THREE.Points(bgGeo, bgMat);
-
-        // Añadimos todo al grupo principal
-        const arbolGrupo = new THREE.Group();
-        arbolGrupo.add(trunkPointsObj, leafPointsObj, fallingPointsObj);
-        scene.add(arbolGrupo, bgPointsObj);
-
-
-        // 5. SECUENCIA NARRATIVA POR ETAPAS CON GSAP
-        const tl = gsap.timeline();
-
-        // ETAPA 1: Construcción mágica del árbol (Ensamblado desde el núcleo)
-        tl.addLabel("etapa1");
-        tl.from(trunkVertices, {
-            x: 0, y: -130, z: 0,
-            duration: 3.5,
-            ease: "power3.out",
-            stagger: { each: 0.0001 }
-        }, "etapa1");
-
-        tl.from(leafVertices, {
-            x: 0, y: -130, z: 0,
-            duration: 4,
-            ease: "power2.out",
-            stagger: { each: 0.0002 }
-        }, "etapa1+=1");
-
-        tl.from(fallingVertices, {
-            x: 0, y: -130, z: 0,
-            duration: 4,
-            ease: "power2.out",
-            stagger: { each: 0.0002 }
-        }, "etapa1+=1");
-
-        // ETAPA 2: El árbol se mueve ligeramente a la izquierda para hacer espacio al texto
-        tl.addLabel("etapa2", "+=0.5");
-        tl.to(arbolGrupo.position, { x: -140, duration: 2.5, ease: "power2.inOut" }, "etapa2");
-        tl.to(arbolGrupo.rotation, { y: 0.3, duration: 2.5, ease: "power2.inOut" }, "etapa2");
-
-        // ETAPA 3: Aparece el primer bloque de palabras líricas
-        tl.addLabel("etapa3");
-        tl.to("#etapa3-texto", { opacity: 1, y: -20, duration: 2 }, "etapa3");
-
-        // ETAPA 4: Las hojas seleccionadas caen flotando al suelo
-        tl.addLabel("etapa4", "+=2.5");
-        // Animamos cada partícula que se cae
-        fallingVertices.forEach((v, index) => {
-            // Movimiento de caída oscilatorio (simulando hojas al viento)
-            tl.to(v, {
-                y: -150 + (Math.random() - 0.5) * 15, // Suelo
-                x: v.x + (Math.random() - 0.5) * 80,  // Desplazamiento lateral
-                z: v.z + (Math.random() - 0.5) * 30,
-                duration: "random(4, 7)",
-                ease: "sine.inOut"
-            }, "etapa4+=" + (index * 0.002));
+        // 3. Creación de las partículas
+        const geometry = new THREE.BufferGeometry().setFromPoints(vertices);
+        const material = new THREE.PointsMaterial({ 
+            size: 3.5, 
+            map: crearTexturaParticula(),
+            transparent: true, 
+            blending: THREE.AdditiveBlending, 
+            depthWrite: false
         });
+        
+        const particles = new THREE.Points(geometry, material);
+        scene.add(particles);
 
-        // ETAPA 5: Transición final. Todo se congela, el árbol se atenúa y emerge la carta central con el fondo estrellado
-        tl.addLabel("etapa5", "+=3");
-        // Desvanecemos el texto de la etapa 3
-        tl.to("#etapa3-texto", { opacity: 0, y: -40, duration: 1.5 }, "etapa5");
-        // Atenuamos un poco el árbol y lo mandamos más atrás para crear profundidad
-        tl.to(arbolGrupo.position, { z: -150, x: -180, duration: 3, ease: "power2.inOut" }, "etapa5");
-        // Hacemos aparecer los corazones del fondo y los movemos al frente
-        tl.to(bgMat, { opacity: 0.7, duration: 2.5 }, "etapa5");
-        tl.to(bgPointsObj.position, { z: 50, duration: 4, ease: "power2.out" }, "etapa5");
-        // Revelamos la carta central interactiva
-        tl.to("#carta-contenedor", { opacity: 1, scale: 1, duration: 2.5, ease: "back.out(1.1)" }, "etapa5+=1");
-
-
-        // 6. BUCLE DE RENDERIZADO CONSTANTE
+        // Bucle de animación
         function animate() {
             requestAnimationFrame(animate);
 
-            // Le indicamos a Three.js que las posiciones de los vértices cambiaron por la animación de GSAP
-            trunkGeo.setFromPoints(trunkVertices);
-            trunkGeo.attributes.position.needsUpdate = true;
+            geometry.setFromPoints(vertices);
+            geometry.attributes.position.needsUpdate = true;
 
-            leafGeo.setFromPoints(leafVertices);
-            leafGeo.attributes.position.needsUpdate = true;
-
-            fallingGeo.setFromPoints(fallingVertices);
-            fallingGeo.attributes.position.needsUpdate = true;
-
-            // Movimiento orgánico muy suave para el fondo (brisa)
-            const tiempo = Date.now() * 0.0005;
-            bgPointsObj.rotation.y = Math.sin(tiempo) * 0.05;
-            bgPointsObj.rotation.x = Math.cos(tiempo) * 0.05;
-            
-            // Rotación contemplativa del árbol
-            arbolGrupo.rotation.y = 0.3 + Math.sin(tiempo * 0.5) * 0.05;
+            // Rotación sutil
+            particles.rotation.y = Math.sin(Date.now() * 0.001) * 0.15;
 
             renderer.render(scene, camera);
         }
         animate();
 
-        // Control de pantalla adaptativo (Mantiene todo centrado y nítido)
+        // Evento adaptativo al redimensionar la ventana
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
+            camera.position.z = obtenerDistanciaCamara(); // Actualiza la distancia de zoom dinámicamente
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
